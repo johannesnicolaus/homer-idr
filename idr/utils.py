@@ -44,7 +44,7 @@ class IdrUtilities(object):
         
         for f in os.listdir(tag_dir):
             # If this is a chr[X].txt file
-            if re.match('chr[A-Za-z0-9]+\.tags\.tsv$',f):
+            if re.match('.*\.tags\.tsv$',f):
                 chr_file = os.path.join(tag_dir, f)
                 shuffled_file = os.path.join(pseudo_tag_dirs[0] + '-tmp', 
                                              f + '.tmp')
@@ -80,7 +80,7 @@ class IdrUtilities(object):
         Make sure to use the /usr/bin/env clause to tell Python to look
         in the environment's path for Homer.
         '''
-        cmd = '/usr/bin/env makeTagDirectory {} -d {}'.format(
+        cmd = 'singularity exec /flash/LuscombeU/singularity.cacheDir/homer_latest.sif makeTagDirectory {} -d {}'.format(
                             target_dir,
                             ' '.join(source_dirs))
         
@@ -153,7 +153,7 @@ class IdrUtilities(object):
             ('peak', Series([-1]*data.shape[0])), # Leave -1 as no point-source is called for each peak
             ))
         df = DataFrame(columns)
-        df = df.sort(['signalValue', 'pValue'], ascending=False)
+        df = df.sort_values(['signalValue', 'pValue'], ascending=False)
         df.to_csv(output_file, sep='\t', header=False, index=False)
         
     def get_first_column(self, data, names, required=True):
@@ -290,7 +290,7 @@ class IdrUtilities(object):
         if not sort_col:
             raise Exception('Could not find column to sort final peaks by!')
             
-        data = data.sort([sort_col], ascending=ascending)
+        data = data.sort_values([sort_col], ascending=ascending)
         data = data[:number_of_peaks]
         
         # Output to file
